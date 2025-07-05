@@ -1,93 +1,1249 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="AI一键去背景工具，上传图片自动生成透明背景图，免费下载，支持SEO优化。" />
-  <title>图片背景消除 | 极速抠图工具</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI抠图工具 | 专业级背景去除 | 增强预览</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #818cf8;
+      --light: #f8fafc;
+      --dark: #0f172a;
+      --gray: #64748b;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
-      font-family: 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e6f7ff 50%, #f5f0ff 100%);
+      min-height: 100vh;
+      color: var(--dark);
+      padding: 0;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(228, 231, 246, 0.8);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .card:hover {
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 28px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(79, 70, 229, 0.3);
+    }
+    
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--primary);
+      color: var(--primary);
+      border-radius: 12px;
+      padding: 12px 24px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-outline:hover {
+      background: rgba(79, 70, 229, 0.05);
+    }
+    
+    .file-drop-area {
+      border: 2px dashed #c7d2fe;
+      border-radius: 12px;
+      padding: 2.5rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: rgba(248, 250, 252, 0.5);
+      cursor: pointer;
+      position: relative;
+    }
+    
+    .file-drop-area:hover, .file-drop-area.active {
+      border-color: var(--primary);
+      background: rgba(129, 140, 248, 0.05);
+    }
+    
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(129, 140, 248, 0.1));
+      border-radius: 14px;
+      margin: 0 auto 1.2rem;
+    }
+    
+    .result-card {
+      transition: all 0.5s ease;
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    
+    .result-card.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .example-img {
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .example-img img {
+      transition: all 0.3s ease;
+    }
+    
+    .example-img:hover img {
+      transform: scale(1.05);
+    }
+    
+    .example-img::after {
+      content: '点击试用';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      font-size: 0.75rem;
+      padding: 4px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .example-img:hover::after {
+      opacity: 1;
+    }
+    
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(79, 70, 229, 0.1);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 2rem auto;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .grid-background {
+      background-image: 
+        linear-gradient(rgba(199, 210, 254, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(199, 210, 254, 0.2) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    
+    .section-title {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 2.5rem;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-light));
+      border-radius: 2px;
+    }
+    
+    .hero-image {
+      border-radius: 16px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      border: 4px solid white;
+    }
+    
+    .nav-link {
+      position: relative;
+      padding: 0.5rem 0;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    .user-badge {
+      background: rgba(79, 70, 229, 0.1);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--primary);
+    }
+    
+    .preview-container {
+      position: relative;
+      display: inline-block;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .preview-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 8px;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+    
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      padding: 15px 25px;
+      display: flex;
+      align-items: center;
+      transform: translateX(200%);
+      transition: transform 0.3s ease;
+      z-index: 1000;
+    }
+    
+    .notification.show {
+      transform: translateX(0);
+    }
+    
+    .notification.success {
+      border-left: 4px solid #10b981;
+    }
+    
+    .notification.error {
+      border-left: 4px solid #ef4444;
+    }
+    
+    .notification i {
+      margin-right: 12px;
+      font-size: 1.2rem;
+    }
+    
+    .notification.success i {
+      color: #10b981;
+    }
+    
+    .notification.error i {
+      color: #ef4444;
+    }
+    
+    .coming-soon {
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .coming-soon::after {
+      content: '即将推出';
+      position: absolute;
+      top: 15px;
+      right: -30px;
+      width: 120px;
+      background: var(--primary);
+      color: white;
+      text-align: center;
+      transform: rotate(45deg);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 0;
+    }
+    
+    .pricing-card {
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    
+    .pricing-card:hover {
+      transform: translateY(-10px);
+    }
+    
+    .disabled-card {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    
+    .disabled-card .btn-primary {
+      background: #e5e7eb;
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+    
+    /* 优化结果预览区 */
+    .preview-wrapper {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+      background-image: 
+        linear-gradient(rgba(199, 210, 254, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(199, 210, 254, 0.2) 1px, transparent 1px);
+      background-size: 20px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .preview-wrapper img {
+      max-width: 100%;
+      max-height: 100%;
+      transition: transform 0.3s ease;
+    }
+    
+    .preview-controls {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .preview-btn {
+      background: white;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .preview-btn:hover {
+      background: #f1f5f9;
+    }
+    
+    .preview-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .preview-btn i {
+      font-size: 0.9rem;
+    }
+    
+    /* 对比预览区 */
+    .comparison-section {
+      margin-top: 2rem;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 1.5rem;
+    }
+    
+    .comparison-container {
+      position: relative;
+      width: 100%;
+      height: 200px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 1.5rem;
+    }
+    
+    .comparison-container img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    
+    #original-result {
+      z-index: 1;
+    }
+    
+    #result-image-compare {
+      z-index: 2;
+    }
+    
+    .comparison-handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 3px;
+      background: white;
+      cursor: ew-resize;
+      z-index: 3;
+      transform: translateX(-50%);
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+    
+    .comparison-label {
+      position: absolute;
+      top: 10px;
+      padding: 4px 8px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      z-index: 4;
+    }
+    
+    .original-label {
+      left: 10px;
+    }
+    
+    .result-label {
+      right: 10px;
+    }
+    
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .hero-content {
+        flex-direction: column;
+      }
+      
+      .hero-text, .upload-section {
+        width: 100% !important;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr !important;
+      }
+      
+      .pricing-grid {
+        grid-template-columns: 1fr !important;
+      }
+      
+      .preview-wrapper {
+        height: 300px;
+      }
+      
+      .comparison-container {
+        height: 180px;
+      }
     }
   </style>
 </head>
-<body class="bg-white min-h-screen flex flex-col items-center justify-center py-10 px-4">
-  <main class="w-full max-w-6xl flex flex-col md:flex-row items-center justify-between gap-12">
-    <!-- 左侧介绍区域 -->
-    <div class="md:w-1/2 text-center md:text-left">
-      <div class="relative inline-block">
-       <img src="https://images.unsplash.com/photo-1494790108755-2616b612b5bc?w=400&h=400&fit=crop&crop=face" alt="示例人物" class="w-64 mx-auto md:mx-0 z-10 relative rounded-xl shadow-lg" />
-        <div class="absolute top-8 left-1/2 md:left-24 -translate-x-1/2 w-40 h-32 bg-yellow-300 rounded-full opacity-60 -z-10"></div>
+<body class="min-h-screen flex flex-col">
+  <!-- 顶部导航 -->
+  <nav class="py-4">
+    <div class="container flex items-center justify-between">
+      <div class="flex items-center">
+        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xl mr-3">
+          AI
+        </div>
+        <span class="text-xl font-bold text-indigo-800">极速抠图Pro</span>
       </div>
-      <h1 class="text-4xl font-extrabold text-gray-800 mt-6">图片背景消除</h1>
-      <p class="text-sm text-gray-600 mt-2">
-        <span class="text-blue-600 font-semibold">100% 全自动</span> 且 <span class="bg-yellow-300 px-1.5 py-0.5 rounded text-black font-bold">免费</span>
-      </p>
+      <div class="hidden md:flex items-center space-x-6">
+        <a href="#" class="nav-link text-gray-700 font-medium">首页</a>
+        <a href="#" class="nav-link text-gray-700 font-medium">教程</a>
+        <a href="#" class="nav-link text-gray-700 font-medium">示例</a>
+        <a href="#" class="nav-link text-gray-700 font-medium">定价</a>
+        <a href="#" class="nav-link text-gray-700 font-medium">支持</a>
+      </div>
+      <div class="flex items-center space-x-3">
+        <div id="user-status" class="user-badge">
+          <i class="fas fa-image mr-1"></i>
+          <span id="free-count">20</span> 张免费
+        </div>
+        <button class="btn-outline" id="upgrade-btn">
+          <i class="fas fa-crown mr-2"></i>高级功能
+        </button>
+      </div>
     </div>
+  </nav>
 
-    <!-- 右侧上传区域 -->
-    <div class="md:w-1/2 bg-white border border-gray-200 rounded-2xl shadow-lg p-6 w-full text-center">
-      <form id="upload-form" enctype="multipart/form-data" class="space-y-4">
-        <label for="image-input" class="block text-lg font-semibold text-gray-700">上传图片</label>
-        <input id="image-input" type="file" accept="image/*" class="block w-full border border-gray-300 rounded px-4 py-2 cursor-pointer" required />
-        <p class="text-sm text-gray-500">或者拖放一个文件，粘贴图片或 URL</p>
-        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">开始处理</button>
-      </form>
+  <!-- 主内容区 -->
+  <main class="flex-grow py-10">
+    <div class="container">
+      <!-- 头部区域 -->
+      <div class="hero-content flex flex-col md:flex-row items-center gap-10 mb-16 fade-in">
+        <div class="hero-text md:w-1/2 text-center md:text-left">
+          <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4 leading-tight">
+            专业级AI
+            <span class="text-indigo-600">背景去除</span><br>
+            精准预览结果
+          </h1>
+          <p class="text-lg text-gray-600 mb-8 max-w-xl">
+            上传图片，AI智能去除背景，<span class="text-indigo-600 font-bold">免费试用20张</span>。增强预览功能让您清晰查看每个细节！
+          </p>
+          
+          <div class="flex flex-wrap gap-3 mb-8">
+            <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+              <i class="fas fa-bolt mr-1"></i> 秒级处理
+            </span>
+            <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+              <i class="fas fa-expand-arrows-alt mr-1"></i> 高清预览
+            </span>
+            <span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-medium">
+              <i class="fas fa-crown mr-1"></i> 免费20张
+            </span>
+            <span class="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
+              <i class="fas fa-exchange-alt mr-1"></i> 智能对比
+            </span>
+          </div>
+          
+          <div class="flex items-center gap-4">
+            <button class="btn-primary" id="upload-trigger">
+              <i class="fas fa-cloud-upload-alt mr-2"></i>上传图片
+            </button>
+            <a href="#" class="text-indigo-600 font-medium hover:underline">
+              查看示例 <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div class="hero-image md:w-1/2">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1494790108755-2616b612b5bc?w=600&h=600&fit=crop&crop=face" alt="AI抠图示例" class="w-full rounded-xl">
+            <div class="absolute inset-0 bg-gradient-to-t from-indigo-900/40 to-transparent rounded-xl"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 核心功能区域 -->
+      <div class="card p-6 md:p-8 mb-16">
+        <div class="flex flex-col md:flex-row gap-10">
+          <!-- 上传区域 -->
+          <div class="upload-section md:w-1/2">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-2xl font-bold text-gray-800">
+                <i class="fas fa-cloud-upload-alt text-indigo-500 mr-2"></i>上传图片
+              </h2>
+              <div class="user-badge">
+                <i class="fas fa-image mr-1"></i>
+                <span id="free-count-main">20</span> 张免费剩余
+              </div>
+            </div>
+            <p class="text-gray-500 mb-6">支持 JPG, PNG, WEBP 格式，最大10MB</p>
+            
+            <form id="upload-form" enctype="multipart/form-data" class="space-y-4">
+              <div class="file-drop-area" id="drop-area">
+                <input id="image-input" type="file" accept="image/*" class="hidden" required />
+                <div class="text-center py-6">
+                  <div class="inline-block bg-indigo-100 p-4 rounded-full mb-4">
+                    <i class="fas fa-cloud-upload-alt text-indigo-600 text-2xl"></i>
+                  </div>
+                  <p class="font-medium text-gray-700 mb-2">拖放图片或点击上传</p>
+                  <p class="text-sm text-gray-500">支持 PNG, JPG, WEBP 格式</p>
+                </div>
+              </div>
+              
+              <!-- 原始图片预览 -->
+              <div id="original-preview" class="hidden mt-6">
+                <h3 class="text-lg font-medium text-gray-700 mb-2">原始图片预览</h3>
+                <div class="preview-container">
+                  <img id="original-image" class="max-w-full rounded-lg" />
+                  <div class="preview-overlay">您上传的原始图片</div>
+                </div>
+              </div>
+              
+              <button type="submit" class="btn-primary w-full mt-4">
+                <i class="fas fa-wand-magic-sparkles mr-2"></i> AI智能去除背景
+              </button>
+            </form>
 
-      <div id="preview" class="mt-6 hidden text-center">
-        <h2 class="text-lg font-semibold text-gray-800 mb-2">✅ 去背景结果：</h2>
-        <img id="result-image" src="" alt="处理结果" class="max-w-full mx-auto rounded border shadow mb-3" />
-        <a id="download-btn" href="#" download class="inline-block bg-green-500 text-white px-5 py-2 rounded hover:bg-green-600 transition">📥 下载透明图</a>
+            <div id="loading" class="hidden mt-8">
+              <div class="loading-spinner"></div>
+              <p class="text-center text-gray-600 font-medium">AI正在处理您的图片，请稍候...</p>
+            </div>
+          </div>
+          
+          <!-- 结果预览区域 -->
+          <div class="result-section md:w-1/2">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">去除背景结果</h2>
+            
+            <div id="preview" class="hidden">
+              <!-- 预览控制 -->
+              <div class="preview-controls">
+                <button class="preview-btn" id="zoom-in-btn">
+                  <i class="fas fa-search-plus"></i> 放大
+                </button>
+                <button class="preview-btn" id="zoom-out-btn">
+                  <i class="fas fa-search-minus"></i> 缩小
+                </button>
+                <button class="preview-btn" id="bg-toggle-btn">
+                  <i class="fas fa-paint-brush"></i> 背景
+                </button>
+                <button class="preview-btn" id="compare-toggle-btn">
+                  <i class="fas fa-exchange-alt"></i> 对比
+                </button>
+              </div>
+              
+              <!-- 主预览区 -->
+              <div class="preview-wrapper" id="main-preview">
+                <img id="result-image" src="" alt="去除背景结果" />
+              </div>
+              
+              <div class="flex flex-wrap gap-3">
+                <a id="download-btn" href="#" download="removed-bg.png" class="btn-primary flex-1">
+                  <i class="fas fa-download mr-2"></i>下载透明图
+                </a>
+                <button id="new-upload" class="btn-outline flex-1">
+                  <i class="fas fa-plus mr-2"></i>新图片
+                </button>
+              </div>
+              
+              <!-- 对比预览区 -->
+              <div class="comparison-section hidden" id="comparison-section">
+                <h3 class="text-lg font-semibold text-gray-700 mb-3 flex items-center">
+                  <i class="fas fa-exchange-alt text-indigo-500 mr-2"></i> 对比预览
+                </h3>
+                <div class="comparison-container">
+                  <img id="original-result" src="" alt="原始图片" />
+                  <img id="result-image-compare" src="" alt="处理结果" />
+                  <div class="comparison-label original-label">原始图片</div>
+                  <div class="comparison-label result-label">去除背景</div>
+                  <div class="comparison-handle" id="comparison-handle"></div>
+                </div>
+              </div>
+              
+              <div class="mt-6">
+                <h3 class="font-semibold text-gray-700 mb-2">分享结果</h3>
+                <div class="flex gap-3">
+                  <button class="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition">
+                    <i class="fab fa-facebook-f"></i>
+                  </button>
+                  <button class="p-2 bg-sky-100 text-sky-600 rounded-lg hover:bg-sky-200 transition">
+                    <i class="fab fa-twitter"></i>
+                  </button>
+                  <button class="p-2 bg-pink-100 text-pink-600 rounded-lg hover:bg-pink-200 transition">
+                    <i class="fab fa-instagram"></i>
+                  </button>
+                  <button class="p-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
+                    <i class="fas fa-link"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <div id="empty-state" class="text-center py-10">
+              <div class="inline-block bg-indigo-50 p-6 rounded-full mb-4">
+                <i class="fas fa-image text-indigo-500 text-3xl"></i>
+              </div>
+              <h3 class="text-xl font-semibold text-gray-700 mb-2">上传图片查看结果</h3>
+              <p class="text-gray-500 max-w-md mx-auto">
+                上传图片后，AI将自动移除背景并生成透明图片供您下载
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 功能特点 -->
+      <div class="mb-16">
+        <h2 class="section-title text-3xl font-bold text-center text-gray-800">强大功能</h2>
+        
+        <div class="features-grid grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="card p-6 hover:border-indigo-200 transition-all">
+            <div class="feature-icon">
+              <i class="fas fa-expand-arrows-alt text-indigo-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-center mb-3">增强预览</h3>
+            <p class="text-gray-600 text-center">
+              专业级预览工具，支持放大、背景切换，清晰查看每个细节
+            </p>
+          </div>
+          
+          <div class="card p-6 hover:border-indigo-200 transition-all">
+            <div class="feature-icon">
+              <i class="fas fa-robot text-indigo-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-center mb-3">AI智能识别</h3>
+            <p class="text-gray-600 text-center">
+              深度学习算法精准识别主体边缘，头发丝级别抠图效果
+            </p>
+          </div>
+          
+          <div class="card p-6 hover:border-indigo-200 transition-all">
+            <div class="feature-icon">
+              <i class="fas fa-exchange-alt text-indigo-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-center mb-3">智能对比</h3>
+            <p class="text-gray-600 text-center">
+              一键切换对比模式，直观查看去除背景前后效果差异
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 用户评价 -->
+      <div class="mb-16">
+        <h2 class="section-title text-3xl font-bold text-center text-gray-800">用户评价</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+          <div class="card p-6">
+            <div class="flex items-center mb-4">
+              <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold mr-3">
+                L
+              </div>
+              <div>
+                <h4 class="font-semibold">李明</h4>
+                <div class="flex text-amber-400">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+            </div>
+            <p class="text-gray-600 italic">
+              "预览功能太棒了！可以放大查看每个细节，背景切换功能让我能清晰看到透明效果。"
+            </p>
+          </div>
+          
+          <div class="card p-6">
+            <div class="flex items-center mb-4">
+              <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold mr-3">
+                W
+              </div>
+              <div>
+                <h4 class="font-semibold">王芳</h4>
+                <div class="flex text-amber-400">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                </div>
+              </div>
+            </div>
+            <p class="text-gray-600 italic">
+              "作为电商卖家，每天需要处理大量产品图片。这个工具帮我节省了大量时间，对比功能非常实用！"
+            </p>
+          </div>
+          
+          <div class="card p-6">
+            <div class="flex items-center mb-4">
+              <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold mr-3">
+                Z
+              </div>
+              <div>
+                <h4 class="font-semibold">张设计师</h4>
+                <div class="flex text-amber-400">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star-half-alt"></i>
+                </div>
+              </div>
+            </div>
+            <p class="text-gray-600 italic">
+              "专业的设计师工具！预览功能让我能精准调整细节，头发丝都能完美保留。"
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </main>
 
-  <!-- 示例图区域 -->
-  <div class="mt-12 text-center">
-    <p class="text-sm text-gray-500 mb-2">没有图片？试试这些示例：</p>
-    <div class="flex justify-center gap-3">
-      <img src="https://unsplash.it/60/60?1" alt="示例1" class="rounded-lg w-16 h-16 object-cover" />
-      <img src="https://unsplash.it/60/60?2" alt="示例2" class="rounded-lg w-16 h-16 object-cover" />
-      <img src="https://unsplash.it/60/60?3" alt="示例3" class="rounded-lg w-16 h-16 object-cover" />
-      <img src="https://unsplash.it/60/60?4" alt="示例4" class="rounded-lg w-16 h-16 object-cover" />
+  <!-- 通知 -->
+  <div class="notification" id="notification">
+    <i class="fas fa-check-circle"></i>
+    <div>
+      <p class="font-medium" id="notification-title">操作成功</p>
+      <p class="text-sm text-gray-600" id="notification-message">您的图片已成功处理</p>
     </div>
   </div>
 
-  <footer class="mt-16 text-center text-xs text-gray-400">
-    <p>© 2025 极速抠图 | 使用 remove.bg API 技术</p>
+  <!-- 页脚 -->
+  <footer class="py-10 bg-white border-t border-gray-100">
+    <div class="container">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <div class="flex items-center mb-4">
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg mr-2">
+              AI
+            </div>
+            <span class="text-lg font-bold text-indigo-800">极速抠图Pro</span>
+          </div>
+          <p class="text-gray-600 mb-4">
+            专业级AI背景去除工具，提供增强预览功能
+          </p>
+          <div class="flex gap-3">
+            <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition">
+              <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition">
+              <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-indigo-100 hover:text-indigo-600 transition">
+              <i class="fab fa-instagram"></i>
+            </a>
+          </div>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">产品</h3>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-600 hover:text-indigo-600 transition">功能</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-indigo-600 transition">示例</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-indigo-600 transition">下载</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-indigo-600 transition">API</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">资源</h3>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-gray-600 hover:text-indigo-600 transition">博客</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-indigo-600 transition">教程</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-indigo-600 transition">文档</a></li>
+            <li><a href="#" class="text-gray-600 hover:text-indigo-600 transition">支持</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h3 class="text-lg font-semibold text-gray-800 mb-4">联系</h3>
+          <ul class="space-y-2">
+            <li class="flex items-start">
+              <i class="fas fa-envelope text-indigo-500 mt-1 mr-2"></i>
+              <span class="text-gray-600">support@aicutout.com</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-phone text-indigo-500 mt-1 mr-2"></i>
+              <span class="text-gray-600">+86 123 4567 8910</span>
+            </li>
+            <li class="flex items-start">
+              <i class="fas fa-map-marker-alt text-indigo-500 mt-1 mr-2"></i>
+              <span class="text-gray-600">北京市海淀区科技园区</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="pt-8 border-t border-gray-100 text-center text-gray-500 text-sm">
+        <p>© 2025 极速抠图工具 - 保留所有权利 | 专业级AI背景去除工具</p>
+      </div>
+    </div>
   </footer>
 
   <script>
-    document.getElementById("upload-form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const fileInput = document.getElementById("image-input");
-      const file = fileInput.files[0];
-      if (!file) return;
+    // 配置Remove.bg API
+    const API_KEY = "xEhVhfdPZZWmpnGJWAfd1cvL";
+    const API_URL = "https://api.remove.bg/v1.0/removebg";
 
-      const formData = new FormData();
-      formData.append("image_file", file);
-
-      const apiKey = "xEhVhfdPZZWmpnGJWAfd1cvL"; // 替换为你自己的 API 密钥
-
-      const response = await fetch("https://api.remove.bg/v1.0/removebg", {
-        method: "POST",
-        headers: {
-          "X-Api-Key": apiKey
-        },
-        body: formData
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = URL.createObjectURL(blob);
-        document.getElementById("result-image").src = url;
-        document.getElementById("download-btn").href = url;
-        document.getElementById("preview").classList.remove("hidden");
-      } else {
-        const errorText = await response.text();
-        alert("图片处理失败，错误信息：" + errorText);
+    document.addEventListener('DOMContentLoaded', function() {
+      // 用户状态管理
+      let userState = {
+        freeCount: 20,
+      };
+      
+      // 更新用户状态显示
+      function updateUserStatus() {
+        document.getElementById('free-count').textContent = userState.freeCount;
+        document.getElementById('free-count-main').textContent = userState.freeCount;
       }
+      
+      // 初始化用户状态
+      updateUserStatus();
+      
+      // 元素引用
+      const dropArea = document.getElementById('drop-area');
+      const fileInput = document.getElementById('image-input');
+      const uploadForm = document.getElementById('upload-form');
+      const preview = document.getElementById('preview');
+      const loading = document.getElementById('loading');
+      const resultImage = document.getElementById('result-image');
+      const resultImageCompare = document.getElementById('result-image-compare');
+      const originalResult = document.getElementById('original-result');
+      const downloadBtn = document.getElementById('download-btn');
+      const newUploadBtn = document.getElementById('new-upload');
+      const emptyState = document.getElementById('empty-state');
+      const originalPreview = document.getElementById('original-preview');
+      const originalImage = document.getElementById('original-image');
+      const notification = document.getElementById('notification');
+      const notificationTitle = document.getElementById('notification-title');
+      const notificationMessage = document.getElementById('notification-message');
+      const upgradeBtn = document.getElementById('upgrade-btn');
+      const compareHandle = document.getElementById('comparison-handle');
+      const comparisonSection = document.getElementById('comparison-section');
+      const compareToggleBtn = document.getElementById('compare-toggle-btn');
+      const bgToggleBtn = document.getElementById('bg-toggle-btn');
+      const zoomInBtn = document.getElementById('zoom-in-btn');
+      const zoomOutBtn = document.getElementById('zoom-out-btn');
+      const mainPreview = document.getElementById('main-preview');
+      
+      // 预览状态
+      let zoomLevel = 1;
+      let showComparison = false;
+      const bgColors = ['#f8fafc', '#e2e8f0', '#cbd5e1', '#94a3b8', '#4f46e5', '#10b981', '#f97316', '#ef4444'];
+      let currentBgIndex = 0;
+      let isBgSolid = false;
+      
+      // 显示通知
+      function showNotification(type, title, message) {
+        notification.className = `notification ${type}`;
+        notificationTitle.textContent = title;
+        notificationMessage.textContent = message;
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+          notification.classList.remove('show');
+        }, 3000);
+      }
+      
+      // 拖放功能
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+      });
+      
+      function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+      });
+      
+      ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+      });
+      
+      function highlight() {
+        dropArea.classList.add('active');
+      }
+      
+      function unhighlight() {
+        dropArea.classList.remove('active');
+      }
+      
+      dropArea.addEventListener('drop', handleDrop, false);
+      
+      function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+        handleFiles(files);
+      }
+      
+      dropArea.addEventListener('click', () => {
+        fileInput.click();
+      });
+      
+      fileInput.addEventListener('change', function() {
+        handleFiles(this.files);
+      });
+      
+      function handleFiles(files) {
+        if (files.length > 0) {
+          const file = files[0];
+          if (file.type.match('image.*')) {
+            // 显示原始图片预览
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              originalImage.src = e.target.result;
+              originalPreview.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+          } else {
+            showNotification('error', '格式错误', '请上传图片文件 (JPG, PNG, WEBP)');
+          }
+        }
+      }
+      
+      // 对比滑块交互
+      function initComparison() {
+        const container = document.querySelector('.comparison-container');
+        let isDragging = false;
+        
+        compareHandle.addEventListener('mousedown', function(e) {
+          isDragging = true;
+          document.body.style.cursor = 'ew-resize';
+          e.preventDefault();
+        });
+        
+        document.addEventListener('mousemove', function(e) {
+          if (!isDragging) return;
+          
+          const containerRect = container.getBoundingClientRect();
+          let x = e.clientX - containerRect.left;
+          
+          // 限制在容器范围内
+          x = Math.max(0, Math.min(x, containerRect.width));
+          
+          const percentage = (x / containerRect.width) * 100;
+          resultImageCompare.style.clipPath = `polygon(0 0, ${percentage}% 0, ${percentage}% 100%, 0 100%)`;
+          compareHandle.style.left = `${percentage}%`;
+        });
+        
+        document.addEventListener('mouseup', function() {
+          isDragging = false;
+          document.body.style.cursor = '';
+        });
+        
+        // 触摸设备支持
+        compareHandle.addEventListener('touchstart', function(e) {
+          isDragging = true;
+          e.preventDefault();
+        });
+        
+        document.addEventListener('touchmove', function(e) {
+          if (!isDragging) return;
+          
+          const containerRect = container.getBoundingClientRect();
+          let x = e.touches[0].clientX - containerRect.left;
+          
+          // 限制在容器范围内
+          x = Math.max(0, Math.min(x, containerRect.width));
+          
+          const percentage = (x / containerRect.width) * 100;
+          resultImageCompare.style.clipPath = `polygon(0 0, ${percentage}% 0, ${percentage}% 100%, 0 100%)`;
+          compareHandle.style.left = `${percentage}%`;
+        });
+        
+        document.addEventListener('touchend', function() {
+          isDragging = false;
+        });
+      }
+      
+      // 切换对比模式
+      compareToggleBtn.addEventListener('click', function() {
+        showComparison = !showComparison;
+        
+        if (showComparison) {
+          comparisonSection.classList.remove('hidden');
+          compareToggleBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> 隐藏对比';
+          compareToggleBtn.classList.add('active');
+        } else {
+          comparisonSection.classList.add('hidden');
+          compareToggleBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> 对比';
+          compareToggleBtn.classList.remove('active');
+        }
+      });
+      
+      // 背景切换
+      bgToggleBtn.addEventListener('click', function() {
+        isBgSolid = !isBgSolid;
+        
+        if (isBgSolid) {
+          currentBgIndex = (currentBgIndex + 1) % bgColors.length;
+          mainPreview.style.backgroundColor = bgColors[currentBgIndex];
+          bgToggleBtn.innerHTML = '<i class="fas fa-paint-brush"></i> 透明';
+        } else {
+          mainPreview.style.backgroundColor = 'transparent';
+          bgToggleBtn.innerHTML = '<i class="fas fa-paint-brush"></i> 背景';
+        }
+      });
+      
+      // 放大功能
+      zoomInBtn.addEventListener('click', function() {
+        if (zoomLevel < 3) {
+          zoomLevel += 0.1;
+          resultImage.style.transform = `scale(${zoomLevel})`;
+        }
+      });
+      
+      // 缩小功能
+      zoomOutBtn.addEventListener('click', function() {
+        if (zoomLevel > 0.5) {
+          zoomLevel -= 0.1;
+          resultImage.style.transform = `scale(${zoomLevel})`;
+        }
+      });
+      
+      // 调用Remove.bg API
+      async function removeBackground(file) {
+        const formData = new FormData();
+        formData.append('image_file', file);
+        formData.append('size', 'auto');
+        
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+              'X-Api-Key': API_KEY
+            },
+            body: formData
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`API错误: ${response.status} - ${errorData.errors ? errorData.errors[0].title : '未知错误'}`);
+          }
+          
+          return await response.blob();
+        } catch (error) {
+          console.error('API调用失败:', error);
+          throw error;
+        }
+      }
+      
+      // 表单提交
+      uploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        // 检查用户状态
+        if (userState.freeCount <= 0) {
+          showNotification('error', '额度不足', '您的免费额度已用完');
+          return;
+        }
+        
+        const file = fileInput.files[0];
+        if (!file) {
+          showNotification('error', '未选择图片', '请先选择要处理的图片');
+          return;
+        }
+        
+        // 检查文件大小
+        if (file.size > 10 * 1024 * 1024) {
+          showNotification('error', '文件过大', '图片大小不能超过10MB');
+          return;
+        }
+        
+        // 减少免费次数
+        userState.freeCount--;
+        updateUserStatus();
+        
+        // 显示加载状态
+        loading.classList.remove('hidden');
+        preview.classList.add('hidden');
+        emptyState.classList.add('hidden');
+        
+        try {
+          // 调用Remove.bg API
+          const blob = await removeBackground(file);
+          
+          // 将Blob转换为URL
+          const resultUrl = URL.createObjectURL(blob);
+          
+          // 显示结果
+          resultImage.src = resultUrl;
+          resultImageCompare.src = resultUrl;
+          originalResult.src = originalImage.src;
+          downloadBtn.href = resultUrl;
+          downloadBtn.download = `removed-bg-${Date.now()}.png`;
+          
+          // 重置预览状态
+          zoomLevel = 1;
+          resultImage.style.transform = `scale(${zoomLevel})`;
+          mainPreview.style.backgroundColor = 'transparent';
+          isBgSolid = false;
+          bgToggleBtn.innerHTML = '<i class="fas fa-paint-brush"></i> 背景';
+          
+          // 隐藏对比区域
+          showComparison = false;
+          comparisonSection.classList.add('hidden');
+          compareToggleBtn.innerHTML = '<i class="fas fa-exchange-alt"></i> 对比';
+          compareToggleBtn.classList.remove('active');
+          
+          // 隐藏加载，显示结果
+          loading.classList.add('hidden');
+          preview.classList.remove('hidden');
+          
+          // 添加显示动画
+          setTimeout(() => {
+            preview.classList.add('show');
+          }, 50);
+          
+          // 显示成功通知
+          showNotification('success', '处理成功', '背景已成功移除，请下载图片');
+        } catch (error) {
+          console.error('处理失败:', error);
+          loading.classList.add('hidden');
+          showNotification('error', '处理失败', error.message || '请重试或联系支持');
+          
+          // 恢复免费次数（如果是API错误）
+          userState.freeCount++;
+          updateUserStatus();
+        }
+      });
+      
+      // 新上传按钮
+      newUploadBtn.addEventListener('click', () => {
+        preview.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        originalPreview.classList.add('hidden');
+        fileInput.value = '';
+      });
+      
+      // 高级功能按钮
+      upgradeBtn.addEventListener('click', () => {
+        showNotification('success', '功能预告', '高级功能正在开发中，敬请期待！');
+      });
+      
+      // 点击上传按钮触发文件选择
+      document.getElementById('upload-trigger').addEventListener('click', () => {
+        fileInput.click();
+      });
+      
+      // 初始化对比功能
+      initComparison();
     });
   </script>
 </body>
